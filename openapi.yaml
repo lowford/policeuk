@@ -1,0 +1,63 @@
+---
+openapi: 3.1.0
+info:
+  title: Police UK Data
+  description: Data on policing information within England, Wales, and Northern Ireland.
+  license:
+    name: Open Government Licence v3.0
+    url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+  version: 0.0.1
+externalDocs:
+  description: data.police.uk API docs
+  url: https://data.police.uk/docs/
+servers:
+  - url: https://data.police.uk/api
+tags:
+  - name: uncategorised
+    description: Uncategorised API endpoints
+paths:
+  "/crimes-street-dates":
+    get:
+      tags:
+        - uncategorised
+      summary: Dataset Availability
+      description: Get a list of available datasets by date and police force
+      operationId: listDatasetAvailability
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DatasourceAvailability"
+components:
+  schemas:
+    DatasourceAvailability:
+      type: array
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+            name: Date
+            pattern: "\\b\\d{4}-(0[1-9]|1[0-2])\\b"
+            description: ISO-8601 formatted year and date
+            examples:
+              - 2024-04
+              - 2023-06
+              - 2022-10
+              - 2021-09
+          stop-and-search:
+            type: array
+            description:
+              List of police forces providing stop and search information
+              for the given month and year
+            items:
+              type: string
+              examples:
+                - bedfordshire
+                - cleveland
+                - durham
+        x-ogen-properties:
+          stop-and-search:
+            name: StopAndSearch
