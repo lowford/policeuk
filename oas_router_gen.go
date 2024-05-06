@@ -40,6 +40,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.notFound(w, r)
 		return
 	}
+	args := [1]string{}
 
 	// Static code generated router with unwrapped path search.
 	switch {
@@ -48,24 +49,89 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/crimes-street-dates"
+		case '/': // Prefix: "/"
 			origElem := elem
-			if l := len("/crimes-street-dates"); len(elem) >= l && elem[0:l] == "/crimes-street-dates" {
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				// Leaf node.
-				switch r.Method {
-				case "GET":
-					s.handleListDatasetAvailabilityRequest([0]string{}, elemIsEscaped, w, r)
-				default:
-					s.notAllowed(w, r, "GET")
+				break
+			}
+			switch elem[0] {
+			case 'c': // Prefix: "crimes-street-dates"
+				origElem := elem
+				if l := len("crimes-street-dates"); len(elem) >= l && elem[0:l] == "crimes-street-dates" {
+					elem = elem[l:]
+				} else {
+					break
 				}
 
-				return
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleGetDatasetAvailabilityRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+
+				elem = origElem
+			case 'f': // Prefix: "forces"
+				origElem := elem
+				if l := len("forces"); len(elem) >= l && elem[0:l] == "forces" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch r.Method {
+					case "GET":
+						s.handleListPoliceForcesRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "forceId"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleGetPoliceForceRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
 			}
 
 			elem = origElem
@@ -81,7 +147,7 @@ type Route struct {
 	operationID string
 	pathPattern string
 	count       int
-	args        [0]string
+	args        [1]string
 }
 
 // Name returns ogen operation name.
@@ -149,28 +215,99 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/crimes-street-dates"
+		case '/': // Prefix: "/"
 			origElem := elem
-			if l := len("/crimes-street-dates"); len(elem) >= l && elem[0:l] == "/crimes-street-dates" {
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				switch method {
-				case "GET":
-					// Leaf: ListDatasetAvailability
-					r.name = "ListDatasetAvailability"
-					r.summary = "Dataset Availability"
-					r.operationID = "listDatasetAvailability"
-					r.pathPattern = "/crimes-street-dates"
-					r.args = args
-					r.count = 0
-					return r, true
-				default:
-					return
+				break
+			}
+			switch elem[0] {
+			case 'c': // Prefix: "crimes-street-dates"
+				origElem := elem
+				if l := len("crimes-street-dates"); len(elem) >= l && elem[0:l] == "crimes-street-dates" {
+					elem = elem[l:]
+				} else {
+					break
 				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						// Leaf: GetDatasetAvailability
+						r.name = "GetDatasetAvailability"
+						r.summary = "Get dataset availability"
+						r.operationID = "getDatasetAvailability"
+						r.pathPattern = "/crimes-street-dates"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+				elem = origElem
+			case 'f': // Prefix: "forces"
+				origElem := elem
+				if l := len("forces"); len(elem) >= l && elem[0:l] == "forces" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						r.name = "ListPoliceForces"
+						r.summary = "List police forces"
+						r.operationID = "listPoliceForces"
+						r.pathPattern = "/forces"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "forceId"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							// Leaf: GetPoliceForce
+							r.name = "GetPoliceForce"
+							r.summary = "Get a specific police force"
+							r.operationID = "getPoliceForce"
+							r.pathPattern = "/forces/{forceId}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
 			}
 
 			elem = origElem

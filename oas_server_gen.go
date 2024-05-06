@@ -8,12 +8,24 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
-	// ListDatasetAvailability implements listDatasetAvailability operation.
+	// GetDatasetAvailability implements getDatasetAvailability operation.
 	//
 	// Get a list of available datasets by date and police force.
 	//
 	// GET /crimes-street-dates
-	ListDatasetAvailability(ctx context.Context) (DatasourceAvailability, error)
+	GetDatasetAvailability(ctx context.Context) (DatasourceAvailability, error)
+	// GetPoliceForce implements getPoliceForce operation.
+	//
+	// Get detailed information about a specific police force.
+	//
+	// GET /forces/{forceId}
+	GetPoliceForce(ctx context.Context, params GetPoliceForceParams) (GetPoliceForceRes, error)
+	// ListPoliceForces implements listPoliceForces operation.
+	//
+	// List all of the police forces available within the data.police.uk dataset.
+	//
+	// GET /forces
+	ListPoliceForces(ctx context.Context) (PoliceForces, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

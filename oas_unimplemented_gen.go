@@ -13,11 +13,29 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// ListDatasetAvailability implements listDatasetAvailability operation.
+// GetDatasetAvailability implements getDatasetAvailability operation.
 //
 // Get a list of available datasets by date and police force.
 //
 // GET /crimes-street-dates
-func (UnimplementedHandler) ListDatasetAvailability(ctx context.Context) (r DatasourceAvailability, _ error) {
+func (UnimplementedHandler) GetDatasetAvailability(ctx context.Context) (r DatasourceAvailability, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetPoliceForce implements getPoliceForce operation.
+//
+// Get detailed information about a specific police force.
+//
+// GET /forces/{forceId}
+func (UnimplementedHandler) GetPoliceForce(ctx context.Context, params GetPoliceForceParams) (r GetPoliceForceRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListPoliceForces implements listPoliceForces operation.
+//
+// List all of the police forces available within the data.police.uk dataset.
+//
+// GET /forces
+func (UnimplementedHandler) ListPoliceForces(ctx context.Context) (r PoliceForces, _ error) {
 	return r, ht.ErrNotImplemented
 }

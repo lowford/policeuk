@@ -2,6 +2,10 @@
 
 package policeuk
 
+import (
+	"net/url"
+)
+
 type DatasourceAvailability []DatasourceAvailabilityItem
 
 type DatasourceAvailabilityItem struct {
@@ -29,6 +33,292 @@ func (s *DatasourceAvailabilityItem) SetDate(val OptString) {
 // SetStopAndSearch sets the value of StopAndSearch.
 func (s *DatasourceAvailabilityItem) SetStopAndSearch(val []string) {
 	s.StopAndSearch = val
+}
+
+// GetPoliceForceNotFound is response for GetPoliceForce operation.
+type GetPoliceForceNotFound struct{}
+
+func (*GetPoliceForceNotFound) getPoliceForceRes() {}
+
+// NewOptNilPoliceForceEngagementMethodsItemArray returns new OptNilPoliceForceEngagementMethodsItemArray with value set to v.
+func NewOptNilPoliceForceEngagementMethodsItemArray(v []PoliceForceEngagementMethodsItem) OptNilPoliceForceEngagementMethodsItemArray {
+	return OptNilPoliceForceEngagementMethodsItemArray{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilPoliceForceEngagementMethodsItemArray is optional nullable []PoliceForceEngagementMethodsItem.
+type OptNilPoliceForceEngagementMethodsItemArray struct {
+	Value []PoliceForceEngagementMethodsItem
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilPoliceForceEngagementMethodsItemArray was set.
+func (o OptNilPoliceForceEngagementMethodsItemArray) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilPoliceForceEngagementMethodsItemArray) Reset() {
+	var v []PoliceForceEngagementMethodsItem
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilPoliceForceEngagementMethodsItemArray) SetTo(v []PoliceForceEngagementMethodsItem) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsSet returns true if value is Null.
+func (o OptNilPoliceForceEngagementMethodsItemArray) IsNull() bool { return o.Null }
+
+// SetNull sets value to null.
+func (o *OptNilPoliceForceEngagementMethodsItemArray) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v []PoliceForceEngagementMethodsItem
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilPoliceForceEngagementMethodsItemArray) Get() (v []PoliceForceEngagementMethodsItem, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilPoliceForceEngagementMethodsItemArray) Or(d []PoliceForceEngagementMethodsItem) []PoliceForceEngagementMethodsItem {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilString returns new OptNilString with value set to v.
+func NewOptNilString(v string) OptNilString {
+	return OptNilString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilString is optional nullable string.
+type OptNilString struct {
+	Value string
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilString was set.
+func (o OptNilString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilString) SetTo(v string) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsSet returns true if value is Null.
+func (o OptNilString) IsNull() bool { return o.Null }
+
+// SetNull sets value to null.
+func (o *OptNilString) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v string
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilString) Get() (v string, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptNilURI returns new OptNilURI with value set to v.
+func NewOptNilURI(v url.URL) OptNilURI {
+	return OptNilURI{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNilURI is optional nullable url.URL.
+type OptNilURI struct {
+	Value url.URL
+	Set   bool
+	Null  bool
+}
+
+// IsSet returns true if OptNilURI was set.
+func (o OptNilURI) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNilURI) Reset() {
+	var v url.URL
+	o.Value = v
+	o.Set = false
+	o.Null = false
+}
+
+// SetTo sets value to v.
+func (o *OptNilURI) SetTo(v url.URL) {
+	o.Set = true
+	o.Null = false
+	o.Value = v
+}
+
+// IsSet returns true if value is Null.
+func (o OptNilURI) IsNull() bool { return o.Null }
+
+// SetNull sets value to null.
+func (o *OptNilURI) SetToNull() {
+	o.Set = true
+	o.Null = true
+	var v url.URL
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNilURI) Get() (v url.URL, ok bool) {
+	if o.Null {
+		return v, false
+	}
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNilURI) Or(d url.URL) url.URL {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptPoliceForceId returns new OptPoliceForceId with value set to v.
+func NewOptPoliceForceId(v PoliceForceId) OptPoliceForceId {
+	return OptPoliceForceId{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPoliceForceId is optional PoliceForceId.
+type OptPoliceForceId struct {
+	Value PoliceForceId
+	Set   bool
+}
+
+// IsSet returns true if OptPoliceForceId was set.
+func (o OptPoliceForceId) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPoliceForceId) Reset() {
+	var v PoliceForceId
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPoliceForceId) SetTo(v PoliceForceId) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPoliceForceId) Get() (v PoliceForceId, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPoliceForceId) Or(d PoliceForceId) PoliceForceId {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptPoliceForceName returns new OptPoliceForceName with value set to v.
+func NewOptPoliceForceName(v PoliceForceName) OptPoliceForceName {
+	return OptPoliceForceName{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPoliceForceName is optional PoliceForceName.
+type OptPoliceForceName struct {
+	Value PoliceForceName
+	Set   bool
+}
+
+// IsSet returns true if OptPoliceForceName was set.
+func (o OptPoliceForceName) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPoliceForceName) Reset() {
+	var v PoliceForceName
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPoliceForceName) SetTo(v PoliceForceName) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPoliceForceName) Get() (v PoliceForceName, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPoliceForceName) Or(d PoliceForceName) PoliceForceName {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // NewOptString returns new OptString with value set to v.
@@ -75,4 +365,150 @@ func (o OptString) Or(d string) string {
 		return v
 	}
 	return d
+}
+
+// Ref: #/components/schemas/PoliceForce
+type PoliceForce struct {
+	// Descriptive information about a police force. This can sometimes contain markup.
+	Description OptNilString `json:"description"`
+	// The police force's website URL.
+	URL OptNilURI `json:"url"`
+	// Police force's non-emergency contact telephone number.
+	Telephone OptNilString       `json:"telephone"`
+	ID        OptPoliceForceId   `json:"id"`
+	Name      OptPoliceForceName `json:"name"`
+	// List of ways to be informed about the police force.
+	EngagementMethods OptNilPoliceForceEngagementMethodsItemArray `json:"engagement_methods"`
+}
+
+// GetDescription returns the value of Description.
+func (s *PoliceForce) GetDescription() OptNilString {
+	return s.Description
+}
+
+// GetURL returns the value of URL.
+func (s *PoliceForce) GetURL() OptNilURI {
+	return s.URL
+}
+
+// GetTelephone returns the value of Telephone.
+func (s *PoliceForce) GetTelephone() OptNilString {
+	return s.Telephone
+}
+
+// GetID returns the value of ID.
+func (s *PoliceForce) GetID() OptPoliceForceId {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *PoliceForce) GetName() OptPoliceForceName {
+	return s.Name
+}
+
+// GetEngagementMethods returns the value of EngagementMethods.
+func (s *PoliceForce) GetEngagementMethods() OptNilPoliceForceEngagementMethodsItemArray {
+	return s.EngagementMethods
+}
+
+// SetDescription sets the value of Description.
+func (s *PoliceForce) SetDescription(val OptNilString) {
+	s.Description = val
+}
+
+// SetURL sets the value of URL.
+func (s *PoliceForce) SetURL(val OptNilURI) {
+	s.URL = val
+}
+
+// SetTelephone sets the value of Telephone.
+func (s *PoliceForce) SetTelephone(val OptNilString) {
+	s.Telephone = val
+}
+
+// SetID sets the value of ID.
+func (s *PoliceForce) SetID(val OptPoliceForceId) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *PoliceForce) SetName(val OptPoliceForceName) {
+	s.Name = val
+}
+
+// SetEngagementMethods sets the value of EngagementMethods.
+func (s *PoliceForce) SetEngagementMethods(val OptNilPoliceForceEngagementMethodsItemArray) {
+	s.EngagementMethods = val
+}
+
+func (*PoliceForce) getPoliceForceRes() {}
+
+type PoliceForceEngagementMethodsItem struct {
+	// URL of the engagement method.
+	URL OptNilString `json:"url"`
+	// Descriptive information about the police force's engagement method.
+	Description OptNilString `json:"description"`
+	// Title of the engagement method.
+	Title OptString `json:"title"`
+}
+
+// GetURL returns the value of URL.
+func (s *PoliceForceEngagementMethodsItem) GetURL() OptNilString {
+	return s.URL
+}
+
+// GetDescription returns the value of Description.
+func (s *PoliceForceEngagementMethodsItem) GetDescription() OptNilString {
+	return s.Description
+}
+
+// GetTitle returns the value of Title.
+func (s *PoliceForceEngagementMethodsItem) GetTitle() OptString {
+	return s.Title
+}
+
+// SetURL sets the value of URL.
+func (s *PoliceForceEngagementMethodsItem) SetURL(val OptNilString) {
+	s.URL = val
+}
+
+// SetDescription sets the value of Description.
+func (s *PoliceForceEngagementMethodsItem) SetDescription(val OptNilString) {
+	s.Description = val
+}
+
+// SetTitle sets the value of Title.
+func (s *PoliceForceEngagementMethodsItem) SetTitle(val OptString) {
+	s.Title = val
+}
+
+type PoliceForceId string
+
+type PoliceForceName string
+
+type PoliceForces []PoliceForcesItem
+
+type PoliceForcesItem struct {
+	ID   OptPoliceForceId   `json:"id"`
+	Name OptPoliceForceName `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *PoliceForcesItem) GetID() OptPoliceForceId {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *PoliceForcesItem) GetName() OptPoliceForceName {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *PoliceForcesItem) SetID(val OptPoliceForceId) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *PoliceForcesItem) SetName(val OptPoliceForceName) {
+	s.Name = val
 }

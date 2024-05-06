@@ -7,6 +7,7 @@ info:
     name: Open Government Licence v3.0
     url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
   version: 0.0.1
+  contact: {}
 externalDocs:
   description: data.police.uk API docs
   url: https://data.police.uk/docs/
@@ -15,21 +16,83 @@ servers:
 tags:
   - name: uncategorised
     description: Uncategorised API endpoints
+  - name: police-force
+    description: Information about Police Forces
 paths:
   "/crimes-street-dates":
     get:
       tags:
         - uncategorised
-      summary: Dataset Availability
+      summary: Get dataset availability
       description: Get a list of available datasets by date and police force
-      operationId: listDatasetAvailability
+      operationId: getDatasetAvailability
       responses:
-        200:
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 "$ref": "#/components/schemas/DatasourceAvailability"
+  "/forces":
+    get:
+      tags:
+        - police-force
+      summary: List police forces
+      description: List all of the police forces available within the data.police.uk dataset.
+      operationId: listPoliceForces
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PoliceForces"
+  "/forces/{forceId}":
+    get:
+      tags:
+        - police-force
+      summary: Get a specific police force
+      description: Get detailed information about a specific police force.
+      operationId: getPoliceForce
+      parameters:
+        - in: path
+          name: forceId
+          required: true
+          description: ID of the police force to fetch information about
+          schema:
+            "$ref": "#/components/schemas/PoliceForceId"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PoliceForce"
+              example:
+                description: >-
+                  <p>Geographically Cleveland Police is one of the smallest Forces in
+                  England and Wales although the area is one of the most densely populated locations
+                  in the country, with 9.4 people per hectare compared to a national average of 3.6
+                  people per hectare.</p>
+                url: https://www.cleveland.police.uk
+                engagement_methods:
+                - url: https://www.youtube.com/clevelandpolice
+                  description: "<p>Subscribe to Cleveland Police on YouTube</p>"
+                  title: YouTube
+                - url: https://twitter.com/ClevelandPolice
+                  description: "<p>Follow Cleveland Police on Twitter</p>"
+                  title: Twitter
+                - url: https://www.facebook.com/clevelandpolice/
+                  description: "<p>Join the Cleveland Police Facebook page.</p>"
+                  title: Facebook
+                - url: https://www.cleveland.police.uk
+                  description: "<p>Cleveland Police website</p>"
+                  title: website
+                telephone: '101'
+                id: cleveland
+                name: Cleveland Police    
+        "404":
+          description: Page not found
 components:
   schemas:
     DatasourceAvailability:
@@ -61,3 +124,82 @@ components:
         x-ogen-properties:
           stop-and-search:
             name: StopAndSearch
+      example:
+        - date: 2024-05
+          stop-and-search:
+            - bedfordshire
+            - cleveland
+            - durham
+    PoliceForces:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            "$ref": "#/components/schemas/PoliceForceId"
+          name:
+            "$ref": "#/components/schemas/PoliceForceName"
+      example:
+        - id: avon-and-somerset
+          name: Avon and Somerset Constabulary
+        - id: bedfordshire
+          name: Bedfordshire Police
+        - id: cambridgeshire
+          name: Cambridgeshire Constabulary
+    PoliceForceId:
+      type: string
+      name: Force ID
+      description: Unique identifier for the police force
+      examples:
+        - avon-and-somerset
+        - bedfordshire
+        - cambridshire
+    PoliceForceName:
+      type: string
+      name: Force Name
+      description: Name of the police force
+      examples:
+        - Avon and Somerset Constabulary
+        - Bedfordshire Police
+        - Cambridgeshire Constabulary
+    PoliceForce:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Descriptive information about a police force. This can sometimes contain markup.
+          nullable: true
+        url:
+          type: string
+          format: uri
+          description: The police force's website URL
+          nullable: true
+        telephone:
+          type: string
+          description: Police force's non-emergency contact telephone number
+          nullable: true
+        id:
+          "$ref": "#/components/schemas/PoliceForceId"
+        name:
+          "$ref": "#/components/schemas/PoliceForceName"
+        engagement_methods:
+          type: array
+          description: List of ways to be informed about the police force
+          nullable: true
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                description: URL of the engagement method
+                nullable: true
+              description:
+                type: string
+                description: Descriptive information about the police force's engagement method
+                nullable: true
+              title:
+                type: string
+                description: Title of the engagement method
+      x-ogen-properties:
+        engagement_methods:
+          name: EngagementMethods

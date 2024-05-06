@@ -16,23 +16,24 @@ import (
 
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/middleware"
+	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/ogen-go/ogen/otelogen"
 )
 
-// handleListDatasetAvailabilityRequest handles listDatasetAvailability operation.
+// handleGetDatasetAvailabilityRequest handles getDatasetAvailability operation.
 //
 // Get a list of available datasets by date and police force.
 //
 // GET /crimes-street-dates
-func (s *Server) handleListDatasetAvailabilityRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleGetDatasetAvailabilityRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listDatasetAvailability"),
+		otelogen.OperationID("getDatasetAvailability"),
 		semconv.HTTPMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/crimes-street-dates"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListDatasetAvailability",
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "GetDatasetAvailability",
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -68,9 +69,9 @@ func (s *Server) handleListDatasetAvailabilityRequest(args [0]string, argsEscape
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    "ListDatasetAvailability",
-			OperationSummary: "Dataset Availability",
-			OperationID:      "listDatasetAvailability",
+			OperationName:    "GetDatasetAvailability",
+			OperationSummary: "Get dataset availability",
+			OperationID:      "getDatasetAvailability",
 			Body:             nil,
 			Params:           middleware.Parameters{},
 			Raw:              r,
@@ -90,12 +91,12 @@ func (s *Server) handleListDatasetAvailabilityRequest(args [0]string, argsEscape
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListDatasetAvailability(ctx)
+				response, err = s.h.GetDatasetAvailability(ctx)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.ListDatasetAvailability(ctx)
+		response, err = s.h.GetDatasetAvailability(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -103,7 +104,212 @@ func (s *Server) handleListDatasetAvailabilityRequest(args [0]string, argsEscape
 		return
 	}
 
-	if err := encodeListDatasetAvailabilityResponse(response, w, span); err != nil {
+	if err := encodeGetDatasetAvailabilityResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetPoliceForceRequest handles getPoliceForce operation.
+//
+// Get detailed information about a specific police force.
+//
+// GET /forces/{forceId}
+func (s *Server) handleGetPoliceForceRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("getPoliceForce"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/forces/{forceId}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "GetPoliceForce",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		attrOpt := metric.WithAttributeSet(labeler.AttributeSet())
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributeSet(labeler.AttributeSet()))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "GetPoliceForce",
+			ID:   "getPoliceForce",
+		}
+	)
+	params, err := decodeGetPoliceForceParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response GetPoliceForceRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "GetPoliceForce",
+			OperationSummary: "Get a specific police force",
+			OperationID:      "getPoliceForce",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "forceId",
+					In:   "path",
+				}: params.ForceId,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetPoliceForceParams
+			Response = GetPoliceForceRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetPoliceForceParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetPoliceForce(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetPoliceForce(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetPoliceForceResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleListPoliceForcesRequest handles listPoliceForces operation.
+//
+// List all of the police forces available within the data.police.uk dataset.
+//
+// GET /forces
+func (s *Server) handleListPoliceForcesRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listPoliceForces"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/forces"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListPoliceForces",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		attrOpt := metric.WithAttributeSet(labeler.AttributeSet())
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributeSet(labeler.AttributeSet()))
+		}
+		err error
+	)
+
+	var response PoliceForces
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ListPoliceForces",
+			OperationSummary: "List police forces",
+			OperationID:      "listPoliceForces",
+			Body:             nil,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = struct{}
+			Response = PoliceForces
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ListPoliceForces(ctx)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ListPoliceForces(ctx)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeListPoliceForcesResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

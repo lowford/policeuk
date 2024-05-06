@@ -7,18 +7,14 @@ import (
 	"github.com/lowford/policeuk"
 )
 
-const (
-	serverURL = "https://data.police.uk/api"
-)
-
 func main() {
-	client, err := policeuk.NewClient(serverURL)
+	client, err := policeuk.NewClient(policeuk.ServerURL)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	availability, err := client.ListDatasetAvailability(context.TODO())
+	availability, err := client.GetDatasetAvailability(context.TODO())
 
 	if err != nil {
 		log.Fatalln(err)
